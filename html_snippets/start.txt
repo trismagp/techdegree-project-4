@@ -1,6 +1,9 @@
 <div class="screen screen-start" id="start">
   <header>
     <h1>Tic Tac Toe</h1>
+    <div class = "divinput">
+      <input type="text" id="name" placeholder="Enter your name"/>
+    </div>
     <a href="#" class="button">Start game</a>
   </header>
 </div>

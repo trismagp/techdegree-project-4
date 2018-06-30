@@ -15,6 +15,15 @@ h1 {
   text-align: left;
   width: 1.875em; }
 
+input {
+  padding: 1em 2em;
+  border-radius: 4px;
+}
+
+.divinput{
+  margin: 10px;
+}
+
 .button {
   background: #fff;
   border-radius: 4px;
@@ -48,8 +57,8 @@ h1 {
       font-size: 6em; }
     .screen-start .button {
       color: #54D17A; }
-    .screen-start h1 + .button {
-      margin-top: 5em; }
+    .screen-start h1 + .button + .divinput {
+      margin-top: 20em; }
   .screen-win p {
     font-size: 6em;
     font-weight: 700;
@@ -65,7 +74,7 @@ h1 {
       line-height: 0;
       z-index: -1; }
   .screen-win-tie {
-    background: #54D17A; }   
+    background: #54D17A; }
   .screen-win-one {
     background: #FFA000; }
     .screen-win-one .button {
@@ -85,6 +94,10 @@ h1 {
   padding-top: 1em; }
   .board h1 {
     margin-top: 0.3em; }
+  .board p {
+    font-size: 1em;
+    margin: 0;
+  }
 
 .players {
   color: rgba(0, 0, 0, 0.2);
@@ -103,6 +116,9 @@ h1 {
     right: 2.5%; }
   .players-turn {
     outline: none;
+  }
+  .players.active p{
+    color: #fff;
   }
   #player1.active svg g, #player2.active svg g {
     fill: #fff; }
@@ -125,7 +141,7 @@ h1 {
     padding: 1.75em;
     cursor: pointer;
     box-sizing: border-box;
-    transition: 0.2s ease; 
+    transition: 0.2s ease;
     background-size: 100px 100px;
     background-repeat: no-repeat;
     background-position: center center;}
@@ -137,5 +153,3 @@ h1 {
     .boxes .box-filled-2 {
       background-color: #3688C3;
       background-image: url(../img/x.svg); }
-
-
