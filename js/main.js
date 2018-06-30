@@ -223,33 +223,11 @@ function loadBoard(){
   $("#player2").append(`<p>Computer</p>`);
 
   $(".box").on('click',function(){
-    if(mainBoard[$(this).index()] === 0){
-      $(this).addClass(`box-filled-${currentPlayer}`);
-      mainBoard[$(this).index()] = currentPlayer;
-      countTurns += 1;
-      if(isWinner(currentPlayer,mainBoard)){
-        var message;
-        if(currentPlayer ===1 ){
-          message = playerName + " wins";
-        }else{
-          message = "Computer wins";
-        }
-        setTimeout(function (){
-            loadWin(currentPlayer,message);
-        }, 1000);
-      }else if(countTurns===9){
-        setTimeout(function (){
-            loadWin(DRAW, "It's a draw");
-        }, 1000);
-      }else{
-        switchPlayers();
-      }
+    var move = $(this).index();
+    if(mainBoard[move] === 0){
+      playMove(move);
 
-      if(currentPlayer===2){
-        var game = new Game(mainBoard,currentPlayer);
-        minimax(game,0);
-        playMove(game.choice);
-      }
+      computerMove();
     }
   });
 
@@ -263,7 +241,12 @@ function loadBoard(){
       $(this).css('background-image', "none");
     }
   });
+}
 
+function computerMove(){
+  var game = new Game(mainBoard,currentPlayer);
+  minimax(game,0);
+  playMove(game.choice);
 }
 
 function playMove(move){
