@@ -2,180 +2,36 @@ const COLOR_PLAYER1 = '#FFA000';
 const COLOR_PLAYER2 = '#3688C3';
 const COLOR_DRAW = '#54D17A';
 const DRAW = 0;
+const GAME_NOT_OVER = 0;
 
+// list all of the winning possibilities
 const winPossibilities = [
   [0,1,2],[3,4,5],[6,7,8],  // lines
   [0,3,6],[1,4,7],[2,5,8],  // columns
   [0,4,8],[2,4,6]           // diagonals
 ]
 
-const START_VIEW = `<div class="screen screen-start" id="start">
-                      <header>
-                        <h1>Tic Tac Toe</h1>
-                        <div class = "divinput">
-                          <input type="text" id="name" placeholder="Enter your name"/>
-                        </div>
-                        <a href="#" class="button">Start game</a>
-                      </header>
-                    </div>`;
-
-const BOARD_VIEW = `<div class="board" id="board">
-                      <header>
-                        <h1>Tic Tac Toe</h1>
-                        <ul>
-                          <li class="players player1 active" id="player1"><svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-200.000000, -60.000000)" fill="#000000"><g transform="translate(200.000000, 60.000000)"><path d="M21 36.6L21 36.6C29.6 36.6 36.6 29.6 36.6 21 36.6 12.4 29.6 5.4 21 5.4 12.4 5.4 5.4 12.4 5.4 21 5.4 29.6 12.4 36.6 21 36.6L21 36.6ZM21 42L21 42C9.4 42 0 32.6 0 21 0 9.4 9.4 0 21 0 32.6 0 42 9.4 42 21 42 32.6 32.6 42 21 42L21 42Z"/></g></g></g></svg>
-                          </li>
-                          <li class="players player2" id="player2"><svg xmlns="http://www.w3.org/2000/svg" width="42" height="43" viewBox="0 0 42 43" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-718.000000, -60.000000)" fill="#000000"><g transform="translate(739.500000, 81.500000) rotate(-45.000000) translate(-739.500000, -81.500000) translate(712.000000, 54.000000)"><path d="M30 30.1L30 52.5C30 53.6 29.1 54.5 28 54.5L25.5 54.5C24.4 54.5 23.5 53.6 23.5 52.5L23.5 30.1 2 30.1C0.9 30.1 0 29.2 0 28.1L0 25.6C0 24.5 0.9 23.6 2 23.6L23.5 23.6 23.5 2.1C23.5 1 24.4 0.1 25.5 0.1L28 0.1C29.1 0.1 30 1 30 2.1L30 23.6 52.4 23.6C53.5 23.6 54.4 24.5 54.4 25.6L54.4 28.1C54.4 29.2 53.5 30.1 52.4 30.1L30 30.1Z"/></g></g></g></svg></li>
-                        </ul>
-                      </header>
-                      <ul class="boxes">
-                        <li class="box"></li>
-                        <li class="box"></li>
-                        <li class="box"></li>
-                        <li class="box"></li>
-                        <li class="box"></li>
-                        <li class="box"></li>
-                        <li class="box"></li>
-                        <li class="box"></li>
-                        <li class="box"></li>
-                      </ul>
-                    </div>`;
-
-const WIN_VIEW = `<div class="screen screen-win" id="finish">
-                    <header>
-                      <h1>Tic Tac Toe</h1>
-                      <p class="message"></p>
-                      <a href="#" class="button">New game</a>
-                    </header>
-                  </div>`;
-
 var currentPlayer;
 var otherPlayer;
 var mainBoard;
-var countTurns;
 var playerName;
 
 
-function score(winner, depth){
-  if(winner === -1 ){
-    return 0;
-  }
-  if(winner === currentPlayer){
-    return 10 - depth;
-  }
-  return depth - 10
-}
-
-function duplicateBoard(board){
-  return board.slice();
-}
-
-function getNewState(board, move, activeTurn){
-  var newBoard = duplicateBoard(board);
-  newBoard[move] = activeTurn;
-  return newBoard;
-}
-
-function getMaxScoreIndex(scores){
-  var maxScore = scores[0];
-  var maxScoreIndex = 0;
-
-  for (var i = 1; i < scores.length; i++) {
-    if(maxScore < scores[i]){
-      maxScore = scores[i];
-      maxScoreIndex = i;
-    }
-  }
-  return maxScoreIndex;
-}
-
-function getMinScoreIndex(scores){
-  var minScore = scores[0];
-  var minScoreIndex = 0;
-
-  for (var i = 1; i < scores.length; i++) {
-    if(minScore > scores[i]){
-      minScore = scores[i];
-      minScoreIndex = i;
-    }
-  }
-  return minScoreIndex;
-}
-
-function minimax(game, depth){
-  var board = game.board;
-  var scores = game.scores;
-  var moves = game.moves;
-  var activeTurn = game.activeTurn;
-
-  var winner = isGameOver(board);
-
-  if(winner !== 0){
-    return score(winner,depth);
-  }
-
-  for (var move = 0; move < board.length; move++) {
-    if(board[move] === 0){
-      var possibleGame = getNewState(board,move,activeTurn);
-      var newGame = new Game(possibleGame,switchPlayerNumber(activeTurn));
-      scores.push(minimax(newGame, depth + 1));
-      moves.push(move);
-    }
-  }
-
-  if(activeTurn === currentPlayer){
-    var maxScoreIndex = getMaxScoreIndex(scores);
-    game.choice = moves[maxScoreIndex];
-    return scores[maxScoreIndex];
-  }else{
-    var minScoreIndex = getMinScoreIndex(scores);
-    game.choice = moves[minScoreIndex];
-    return scores[minScoreIndex];
-  }
-}
-
-class Game{
-  constructor(board,activeTurn){
-    this.board = board;
-    this.activeTurn = activeTurn;
-    this.choice = -1;
-    this.scores = []; // an array of scores
-    this.moves = []; //  # an array of moves
-  }
-
-  get board(){
-    return this._board;
-  }
-
-  set board(value){
-    this._board = value;
-  }
-
-  get activeTurn(){
-    return this._activeTurn;
-  }
-
-  set activeTurn(value){
-    this._activeTurn = value;
-  }
-
-  get choice(){
-    return this._choice;
-  }
-
-  set choice(value){
-    this._choice = value;
-  }
-
-}
-
-// on start, loads start.txt snippet
+// on start, loads start view
 loadStart();
+
+
+/* =================================
+  Views loader functions
+==================================== */
 
 function loadStart(){
   $("body").empty();
   $("body").append(START_VIEW);
 
+  // event listener: on button click,
+  // get the name input by the player
+  // and load the board view
   $(".button").on('click',function(){
     playerName = $("#name").val();
     playerName = playerName !== "" ? playerName : "Player1";
@@ -183,54 +39,27 @@ function loadStart(){
   });
 }
 
-
-function initBoard(){
-  mainBoard = new Array(9).fill(0);
-  currentPlayer = 1;
-  otherPlayer = 2;
-  winner = 0;
-  countTurns = 0;
-}
-
-function backgroundColor(winner){
-  switch(winner) {
-    case 1:
-        return COLOR_PLAYER1;
-    case 2:
-        return COLOR_PLAYER2;
-    default:
-        return COLOR_DRAW;
-    }
-}
-
-function screenWin(winner){
-  switch(winner) {
-    case 1:
-        return "screen-win-one";
-    case 2:
-        return "screen-win-two";
-    default:
-        return "screen-win-tie";
-    }
-}
-
 function loadBoard(){
   initBoard();
   $("body").empty();
   $("body").append(BOARD_VIEW);
 
+  // display the player's name
   $("#player1").append(`<p>${playerName}</p>`);
-  $("#player2").append(`<p>Computer</p>`);
+  $("#player2").append(`<p>Minimax</p>`);
 
+  // event listener: on .box click, plays the player's move
+  // then the computer plays its move right away
   $(".box").on('click',function(){
     var move = $(this).index();
     if(mainBoard[move] === 0){
       playMove(move);
-
       computerMove();
     }
   });
 
+  // event listener: on .box hover, display the player's image in the box
+  // then removes the image from the box when it's not hovered anymore
   $(".box").hover(function(){
     if(mainBoard[$(this).index()] === 0){
       var image = getPlayerImage(currentPlayer);
@@ -243,46 +72,111 @@ function loadBoard(){
   });
 }
 
+// loads the game over view
+function loadWin(winner, message){
+  $("body").empty();
+  $("body").append(WIN_VIEW);
+
+  // display will be different depending on which player wins
+  // or if the the game ends in a draw
+  $("#finish").addClass(screenClassWin(winner));
+  $(".message").text(message);
+
+  // event listener to load the start view
+  // when button is clicked
+  $(".button").on('click',function(){
+    loadStart();
+  });
+}
+
+// initialise the main game state
+function initBoard(){
+  mainBoard = new Array(9).fill(0);
+  currentPlayer = 1;
+  otherPlayer = 2;
+}
+
+// returns a different color depending on the winner
+// or if the game ends in a draw
+function backgroundColor(winner){
+  switch(winner) {
+    case 1:
+        return COLOR_PLAYER1;
+    case 2:
+        return COLOR_PLAYER2;
+    default:
+        return COLOR_DRAW;
+    }
+}
+
+
+// returns a different class name depending on the winner
+// or if the game ends in a draw
+function screenClassWin(winner){
+  switch(winner) {
+    case 1:
+        return "screen-win-one";
+    case 2:
+        return "screen-win-two";
+    default:
+        return "screen-win-tie";
+    }
+}
+
+// creates first a copy of the game state then pass it
+// to the the minimax algorithm to calculates the computer's move
+// and plays it
 function computerMove(){
   var game = new Game(mainBoard,currentPlayer);
   minimax(game,0);
   playMove(game.choice);
 }
 
+
 function playMove(move){
-  $(".box").eq(move).addClass(`box-filled-${currentPlayer}`);
+  // display the player's move
+  $(".box").eq(move).addClass(`box-filled-${currentPlayer}`); // box background
   var image = getPlayerImage(currentPlayer);
-  $(".box").eq(move).css('background-image', `url('./img/${image}')`);
+  $(".box").eq(move).css('background-image', `url('./img/${image}')`); // box image
+
+  // register the player's move in the main board
   mainBoard[move] = currentPlayer;
-  countTurns += 1;
-  if(isWinner(currentPlayer,mainBoard)){
-    var message;
-    if(currentPlayer ===1 ){
-      message = playerName + " wins";
-    }else{
-      message = "Computer wins";
-    }
+
+  var winner = isGameOver(mainBoard);
+
+  if(winner !== GAME_NOT_OVER){
+    // in order to avoid the free boxes to be clicked when game is over
+    disableFreeBoxes();
+    var message =  getGameOverMessage(winner);
+    // displays the game over screen with a delay of one second
     setTimeout(function (){
-        loadWin(currentPlayer,message);
-    }, 1000);
-  }else if(countTurns===9){
-    setTimeout(function (){
-        loadWin(DRAW, "It's a draw");
+        loadWin(winner, message);
     }, 1000);
   }else{
+    // if game is not over, switch players
     switchPlayers();
   }
 }
 
-function loadWin(winner, message){
-  $("body").empty();
-  $("body").append(WIN_VIEW);
+// remove click and hover listener on the main board free boxes
+function disableFreeBoxes(){
+  for (var i = 0; i < mainBoard.length; i++) {
+    if(mainBoard[i] === 0){
+      console.log("disabled " + i);
+      $(".box").eq(i).unbind('click');
+      $(".box").eq(i).unbind('mouseenter').unbind('mouseleave');
+    }
+  }
+}
 
-  $(".button").on('click',function(){
-    loadStart();
-  });
-  $("#finish").addClass(screenWin(winner));
-  $(".message").text(message);
+function getGameOverMessage(winner){
+  if(winner === 1 ){
+    return playerName + " wins";
+  }
+  if(winner === 2 ){
+     return "Computer wins";
+  }
+  return "It's a draw";
 }
 
 function isGameOver(board){
@@ -293,16 +187,22 @@ function isGameOver(board){
 
     var box1box2box3 = `${box1}${box2}${box3}`;
 
+    // player 1 wins return 1
     if(box1box2box3 === '111'){
       return 1;
     }
+
+    // player 2 wins return 2
     if(box1box2box3 === '222'){
       return 2;
     }
   }
+  // no more free box, it's a draw and returns 0
   if(board.includes(0)){
     return 0;
   }
+
+  // game is not finish yet, return -1
   return -1;
 }
 
