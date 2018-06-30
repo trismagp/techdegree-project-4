@@ -1,8 +1,17 @@
 const START_VIEW = `<div class="screen screen-start" id="start">
                       <header>
                         <h1>Tic Tac Toe</h1>
-                        <div class = "divinput">
-                          <input type="text" id="name" placeholder="Enter your name"/>
+                        <div id="human1" class="divinput">
+                          <input type="text" id="name1" placeholder="Human 1 name"/>
+                        </div>
+                        <div id="human2" class = "divinput">
+                          <input type="text" id="name2" placeholder="Human 2 name"/>
+                        </div>
+                        <div>
+                          <select class="nb-player-choice">
+                           <option value="1">Human vs Computer</option>
+                           <option value="2">Human vs Human</option>
+                          </select>
                         </div>
                         <a href="#" class="button">Start game</a>
                       </header>

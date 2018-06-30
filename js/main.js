@@ -15,6 +15,7 @@ var currentPlayer;
 var otherPlayer;
 var mainBoard;
 var playerName;
+var nbHumanPlayer=1;
 
 
 // on start, loads start view
@@ -28,15 +29,27 @@ loadStart();
 function loadStart(){
   $("body").empty();
   $("body").append(START_VIEW);
+$("#human2").css('display','none');
 
   // event listener: on button click,
   // get the name input by the player
   // and load the board view
   $(".button").on('click',function(){
-    playerName = $("#name").val();
-    playerName = playerName !== "" ? playerName : "Player1";
+    playerName1 = $("#name1").val();
+    playerName1 = playerName1 !== "" ? playerName1 : "Human 1";
+    playerName2 = $("#name2").val();
+    playerName2 = playerName2 !== "" ? playerName2 : "Human 2";
     loadBoard();
   });
+
+  $(".nb-player-choice").on('change',function(){
+    nbHumanPlayer = parseInt($(".player-choice").val());
+    if(nbHumanPlayer === 1){
+      $("#human2").css('display','none');
+    }else{
+      $("#human2").css('display','block');
+    }
+  })
 }
 
 function loadBoard(){
@@ -45,16 +58,21 @@ function loadBoard(){
   $("body").append(BOARD_VIEW);
 
   // display the player's name
-  $("#player1").append(`<p>${playerName}</p>`);
-  $("#player2").append(`<p>Minimax</p>`);
-
+  $("#player1").append(`<p>${playerName1}</p>`);
+  if(nbHumanPlayer===2){
+    $("#player2").append(`<p>${playerName2}</p>`);
+  }else{
+    $("#player2").append(`<p>Minimax (Computer)</p>`);
+  }
   // event listener: on .box click, plays the player's move
   // then the computer plays its move right away
   $(".box").on('click',function(){
     var move = $(this).index();
     if(mainBoard[move] === 0){
       playMove(move);
-      computerMove();
+      if(nbHumanPlayer===1){
+        computerMove();
+      }
     }
   });
 
@@ -162,7 +180,6 @@ function playMove(move){
 function disableFreeBoxes(){
   for (var i = 0; i < mainBoard.length; i++) {
     if(mainBoard[i] === 0){
-      console.log("disabled " + i);
       $(".box").eq(i).unbind('click');
       $(".box").eq(i).unbind('mouseenter').unbind('mouseleave');
     }
@@ -171,10 +188,14 @@ function disableFreeBoxes(){
 
 function getGameOverMessage(winner){
   if(winner === 1 ){
-    return playerName + " wins";
+    return playerName1 + " wins";
   }
   if(winner === 2 ){
-     return "Computer wins";
+      if(nbHumanPlayer===2){
+        return playerName2 + " wins";
+      }else{
+        return "Computer wins";
+      }
   }
   return "It's a draw";
 }

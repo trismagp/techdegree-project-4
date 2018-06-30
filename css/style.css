@@ -24,6 +24,12 @@ input {
   margin: 10px;
 }
 
+.nb-player-choice{
+  margin: 30px;
+  border-radius: 4px;
+}
+
+
 .button {
   background: #fff;
   border-radius: 4px;
