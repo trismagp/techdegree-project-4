@@ -43,7 +43,7 @@ $("#human2").css('display','none');
   });
 
   $(".nb-player-choice").on('change',function(){
-    nbHumanPlayer = parseInt($(".player-choice").val());
+    nbHumanPlayer = parseInt($(".nb-player-choice").val());
     if(nbHumanPlayer === 1){
       $("#human2").css('display','none');
     }else{
