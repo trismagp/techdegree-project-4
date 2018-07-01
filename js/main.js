@@ -27,6 +27,7 @@ loadStart();
 ==================================== */
 
 function loadStart(){
+  initBoard();
   $("body").empty();
   $("body").append(START_VIEW);
 $("#human2").css('display','none');
@@ -53,7 +54,6 @@ $("#human2").css('display','none');
 }
 
 function loadBoard(){
-  initBoard();
   $("body").empty();
   $("body").append(BOARD_VIEW);
 
@@ -112,6 +112,7 @@ function initBoard(){
   mainBoard = new Array(9).fill(0);
   currentPlayer = 1;
   otherPlayer = 2;
+  nbHumanPlayer=1;
 }
 
 // returns a different color depending on the winner
